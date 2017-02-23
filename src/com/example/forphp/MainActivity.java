@@ -23,6 +23,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
 
+import com.example.forphp.utils.UtilDebug;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,16 +41,15 @@ public class MainActivity extends Activity {
 		
 		long len = objEXE.getEntity().getContentLength();
 		
-		System.out.println("len = " + len);
-		System.out.println("\r\n");
-
-		
 		InputStream is = objEXE.getEntity().getContent();
 		
 		File localFile = new File("/data/data/com.example.forphp/MainActivity-debug.apk");
 		boolean ret = localFile.createNewFile();
 		if (ret == false) {
-			System.out.println("-----------------create new file ----failed ==------");
+			UtilDebug.di(
+					UtilDebug.TAG_MAINACTIVITY
+					, "-----------------create new file ----failed ==------"
+					);
 		}
 		FileOutputStream fos = new FileOutputStream(localFile);
 		byte[] buf = new byte[1024];
@@ -58,7 +59,7 @@ public class MainActivity extends Activity {
 				break;	
 			}
 			
-			System.out.println("........");
+			UtilDebug.di(UtilDebug.TAG_MAINACTIVITY, "........");
 			fos.write(buf, 0, cont);
 		}
 		
@@ -68,17 +69,15 @@ public class MainActivity extends Activity {
 		return; 
 	}
 
-
 	public void uploadedAPKFile(String url, String path) throws ClientProtocolException, IOException {
 		File file = new File(path);
 		if (file.exists() == false) {
-			System.out.println("failed");
+			UtilDebug.di(UtilDebug.TAG_MAINACTIVITY, "failed");
 		}
 		
 		HttpClient client = new DefaultHttpClient();
 		HttpPost postOBJ = new HttpPost(url);
 		
-//		FileBody fBody = new FileBody(file);
 		FileBody fBody = new FileBody(file);
 		MultipartEntity entity = new MultipartEntity();
 		entity.addPart("file", fBody);
@@ -90,11 +89,11 @@ public class MainActivity extends Activity {
 			int statusCode = response.getStatusLine().getStatusCode();
 			String result = EntityUtils.toString(response.getEntity(), "UTF-8");
 			
-			System.out.println("statuscode = " + statusCode);
-			System.out.println("result = " + result);
+			UtilDebug.di(UtilDebug.TAG_MAINACTIVITY, "statuscode = " + statusCode);
+			UtilDebug.di(UtilDebug.TAG_MAINACTIVITY, "result = " + result);
 			
 			 if (statusCode == 201) {
-				 System.out.println("successed");
+				 UtilDebug.di(UtilDebug.TAG_MAINACTIVITY, "successed");
 			 }
 			 
 			 client.getConnectionManager().shutdown();
@@ -103,34 +102,27 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 
-		
-
 		return ;	
 	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
 
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-
-
 				try {
-					//			MainActivity.this.uploadFile("http://192.168.155.3/upload.php", "/sdcard/CantvFileManager_v149.apk");
-//					MainActivity.this.uploadedAPKFile("http://192.168.1.109/upload.php", "/data/local/MainActivity-debug.apk");
+
 					MainActivity.this.sendPost("http://192.168.1.109/down.php", "/data/local/MainActivity-debug.apk");
+
 				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
