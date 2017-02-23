@@ -1,4 +1,4 @@
-package com.example.forphp.utils;
+package com.example.forphp.utils.debug;
 
 import android.util.Log;
 
