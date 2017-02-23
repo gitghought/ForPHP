@@ -33,7 +33,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-	public void sendPost(String url, String param) throws ClientProtocolException, IOException {
+	public void sendPost(String url, String fileName) throws ClientProtocolException, IOException {
 		HttpPost objPost = new HttpPost(url);
 
 		HttpClient client = new DefaultHttpClient();
@@ -43,7 +43,8 @@ public class MainActivity extends Activity {
 		
 		InputStream is = objEXE.getEntity().getContent();
 		
-		File localFile = new File("/data/data/com.example.forphp/MainActivity-debug.apk");
+		File localFile = new File(fileName);
+
 		boolean ret = localFile.createNewFile();
 		if (ret == false) {
 			UtilDebug.di(
@@ -116,7 +117,10 @@ public class MainActivity extends Activity {
 			public void run() {
 				try {
 
-					MainActivity.this.sendPost("http://192.168.1.109/down.php", "/data/local/MainActivity-debug.apk");
+					MainActivity.this.sendPost(
+							"http://192.168.1.109/down.php", 
+							"/data/data/com.example.forphp/MainActivity-debug.apk"
+							);
 
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
